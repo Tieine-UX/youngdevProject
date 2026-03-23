@@ -1,1 +1,3 @@
-console.log('Hallo world');
+const age = 18;
+const beverage = age >= 21 ? "Beer" : "Juice";
+console.log(beverage);
