@@ -1,3 +1,4 @@
-const age = 18;
-const beverage = age >= 21 ? "Beer" : "Juice";
-console.log(beverage);
+function area(length, width) {
+    var result = parseInt(length) * parseInt(width);
+    document.getElementById("output").innerHTML = result;
+}
