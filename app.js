@@ -24,7 +24,7 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
     if(err) {
-        console.error('Error connecting to MYSQL:'. err);
+        console.error('Error connecting to MYSQL:', err);
         return;
     }
     console.log('Connected to MySQL successfully!');
@@ -48,7 +48,37 @@ app.post('/products', (req, res) => {
             console.error('Error fetching items: ',err);
             return res.status(500).json({message: 'Error fetch item'});
         }
-        res.status(201).json({id: results.insertld, ProductName: results.ProductName});  
+        res.status(201).json({id: results.insertId, ProductName: results.ProductName});  
+    });
+});
+app.put('/products/:id', (req, res) => {
+    const id = req.params.id;
+    const items = req.body;
+    const query = `UPDATE product SET ProductName = '${items.ProductName}', price =
+   ${items.price}, qty = ${items.qty} WHERE productID = ${id} `;
+
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error updating item: ', err);
+            return res.status(500).json({ message: 'Error updating item' });
+        }
+        if (results.affectedRows === 0) {
+        return res.status(404).json({ message: 'Item not found' });
+        }
+        res.json({status: "success", message: 'Update successful'});
+    });
+});
+
+app.get('/products/:id', (req, res) => {
+    const id = req.params.id;
+    const query = `SELECT * FROM product WHERE ProductID = ${id} `;
+
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching item: ', err);
+            return res.status(500).json({ message: 'Error fetching item' });
+        }
+        res.json(results);
     });
 });
 app.delete('/products/:id', (req, res) => {
@@ -60,7 +90,7 @@ app.delete('/products/:id', (req, res) => {
             console.error('Error deleting item: ', err);
             return res.status(500).json({ message: 'Error deleting item' });
         }
-        if (result.affectedRows === 0) {
+        if (results.affectedRows === 0) {
             return res.status(404).json({ message: 'Item not found' });
         }
             res.json({ message: 'Item deleted' });
